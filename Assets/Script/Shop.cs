@@ -75,6 +75,12 @@ public class Shop : MonoBehaviour
             {
                 ShopItemList[i].displayedPrice = (ShopItemList[i].price / 1000) + "K";
             }
+            else if (ShopItemList[i].itemType == ItemType.LandForRent)
+            {
+                ShopItemList[i].displayedPrice = ShopItemList[i].price.ToString() + "/D";
+                buyBtn.transform.GetChild(0).GetComponent<TMP_Text>().text = "RENT";
+               //Debug.Log($"Item {i} Type: {ShopItemList[i].itemType}, Displayed Price: {ShopItemList[i].displayedPrice}");
+            }
             else
             {
                 ShopItemList[i].displayedPrice = ShopItemList[i].price.ToString();
@@ -113,11 +119,12 @@ public class Shop : MonoBehaviour
                 }
             }
 
+          
             buyBtn.AddEventListener(i, OnShopItemBtnClicked);
             if (ShopItemList[i].isPurchased)
             {
                 DisableBuyButton(buyBtn);
-            }
+            }   
 
             // Adjust the position of the "K" based on the length of the displayed value
             AdjustKPosition(g.transform.GetChild(1).GetChild(0).GetComponent<TMP_Text>(), ShopItemList[i].price);
@@ -128,11 +135,13 @@ public class Shop : MonoBehaviour
     {
         Button clickedButton = ShopScrollView.GetChild(itemIndex).GetChild(2).GetComponent<Button>();
 
-        if (GameManager.instance.HasEnoughCoins(ShopItemList[itemIndex].price))
+        if (AssetManager.instance.HasEnoughCoins(ShopItemList[itemIndex].price))
         {
-            GameManager.instance.UseCoins(ShopItemList[itemIndex].price);
+            
+            //AssetManager.instance.SpendCoins(ShopItemList[itemIndex].price); // Spend coins in the AssetManager
 
             ShopItemList[itemIndex].isPurchased = true;
+            Debug.Log("Item is purchased");
 
             // Handle item type-specific logic
             switch (ShopItemList[itemIndex].itemType)
@@ -151,6 +160,7 @@ public class Shop : MonoBehaviour
             DisableBuyButton(clickedButton);
 
             GameManager.instance.UpdateAllCoinsUIText();
+            //AssetManager.instance.UpdateAssetUI(); // Add this line to update the asset data
         }
         else
         {
@@ -164,6 +174,14 @@ public class Shop : MonoBehaviour
         // Disable the clicked button
         clickedButton.interactable = false;
         clickedButton.transform.GetChild(0).GetComponent<TMP_Text>().text = "PURCHASED";
+    }
+
+    public void ResetPurchaseStates()
+    {
+        foreach (var item in ShopItemList)
+        {
+            item.isPurchased = false;
+        }
     }
 
     void AdjustKPosition(TMP_Text textComponent, int value)
@@ -185,4 +203,7 @@ public class Shop : MonoBehaviour
             //Debug.LogError("Unable to find 'K' in the text.");
         //}
     }
+
+    
+    
 }

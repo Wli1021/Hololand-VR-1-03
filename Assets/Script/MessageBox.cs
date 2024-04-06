@@ -7,6 +7,7 @@ public class MessageBox : MonoBehaviour
     public TMP_Text messageText;
     public Button closeButton;
     public GameObject messagePanel;
+    public AudioSource notEnoughCoinSound;
 
     void Start()
     {
@@ -21,6 +22,7 @@ public class MessageBox : MonoBehaviour
     {
         messageText.text = message;
         messagePanel.SetActive(true);
+        notEnoughCoinSound.Play();
     }
 
     public void HideMessageBox()

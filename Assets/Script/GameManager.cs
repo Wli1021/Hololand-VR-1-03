@@ -8,19 +8,19 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public GameObject shopUI;
+    public Transform head;
+    public float spawnDistance = 4;
 
     [SerializeField] TMP_Text[] allCoinsUIText;
 
     public int coins;
-
-
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -30,32 +30,57 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("AssetManager instance before UpdateAllCoinsUIText: " + AssetManager.instance);
         UpdateAllCoinsUIText();
+        HideShopUI();
+        
     }
 
-    public void ToggleShopUI()
+
+    public void HideShopUI()
     {
-        shopUI.SetActive(!shopUI.activeSelf);
+        shopUI.SetActive(false);
+
+
     }
 
-    public void UseCoins(int amount)
+    public void ShowShopUI()
     {
-        coins -= amount;
+        if (shopUI != null)
+        {
+            shopUI.SetActive(true); 
+          
+        }
+ 
+    }
+    public void CloseShopUI()
+    {
+        if (shopUI != null)
+        {
+            shopUI.SetActive(false); 
+        }
+        
     }
 
-    public bool HasEnoughCoins(int amount)
-    {
-        return (coins >= amount);
-    }
+
+    //public void UseCoins(int amount)
+    //{
+    //AssetManager.instance.SpendCoins(amount);
+    //}
+
+    //public bool HasEnoughCoins(int amount)
+    //{
+    //return (AssetManager.instance.coins >= amount);
+    //}
 
     public void UpdateAllCoinsUIText()
     {
-        // Calculate total voting power from assets and coins
-        int totalVotingPowerFromAssets = AssetManager.instance.GetTotalVotingPower();
-
-        for (int i = 0; i < allCoinsUIText.Length; i++)
+        Debug.Log($"Updating UI with {AssetManager.instance.coins} coins across {allCoinsUIText.Length} text elements.");
+        foreach (TMP_Text coinText in allCoinsUIText)
         {
-            allCoinsUIText[i].text = allCoinsUIText[i].text = "Coins: " + coins.ToString();
+            coinText.text = "Coins: " + AssetManager.instance.coins.ToString();
+            Debug.Log($"Set text to: {coinText.text}");
         }
     }
+
 }
